@@ -22,6 +22,7 @@ RUN composer install --no-interaction --prefer-dist --no-progress --optimize-aut
     && php bin/console cache:clear \
     && chown -R www-data:www-data var public
 
+RUN rm -f /etc/nginx/conf.d/default.conf /etc/nginx/sites-enabled/default
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.d/www.conf
 
