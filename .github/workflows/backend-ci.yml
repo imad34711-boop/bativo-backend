@@ -1,0 +1,48 @@
+name: backend-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: bativo_test
+          POSTGRES_USER: bativo
+          POSTGRES_PASSWORD: bativo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U bativo -d bativo_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgresql://bativo:bativo@127.0.0.1:5432/bativo_test?serverVersion=16&charset=utf8
+      JWT_PASSPHRASE: bativo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_pgsql, intl, mbstring
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate schema
+        run: php bin/console doctrine:schema:validate
+
+      - name: Run tests
+        run: php bin/phpunit
