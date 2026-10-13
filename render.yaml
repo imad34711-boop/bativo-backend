@@ -6,7 +6,6 @@ services:
     plan: starter
     healthCheckPath: /api/health
     autoDeploy: true
-    startCommand: sh -c "php-fpm -D && nginx -g 'daemon off;'"
     envVars:
       - key: APP_ENV
         value: production
@@ -19,11 +18,11 @@ services:
       - key: CORS_ALLOW_ORIGIN
         value: https://your-frontend-domain.example.com
       - key: JWT_SECRET_KEY
-        generateValue: true
+        value: /var/www/html/config/jwt/private.pem
       - key: JWT_PUBLIC_KEY
-        generateValue: true
+        value: /var/www/html/config/jwt/public.pem
       - key: JWT_PASSPHRASE
-        generateValue: true
+        value: replace-me
     initialDeployHook: php bin/console doctrine:migrations:migrate --no-interaction
 
 databases:
