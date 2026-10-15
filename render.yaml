@@ -22,7 +22,7 @@ services:
       - key: JWT_PUBLIC_KEY
         value: /var/www/html/config/jwt/public.pem
       - key: JWT_PASSPHRASE
-        value: replace-me
+        sync: false
     preDeployCommand: php bin/console doctrine:migrations:migrate --no-interaction
 
 databases:
