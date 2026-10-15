@@ -22,6 +22,19 @@ RUN composer install --no-interaction --prefer-dist --no-progress --optimize-aut
     && php bin/console cache:clear \
     && chown -R www-data:www-data var public
 
+RUN printf '%s\n' \
+    'log_errors = On' \
+    'error_log = /proc/self/fd/2' \
+    > /usr/local/etc/php/conf.d/99-error-log.ini \
+    && printf '%s\n' \
+    'catch_workers_output = yes' \
+    'decorate_workers_output = no' \
+    'php_admin_flag[log_errors] = on' \
+    'php_admin_value[error_log] = /proc/self/fd/2' \
+    >> /usr/local/etc/php-fpm.d/www.conf \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
+
 RUN rm -f /etc/nginx/conf.d/default.conf /etc/nginx/sites-enabled/default
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.d/www.conf
