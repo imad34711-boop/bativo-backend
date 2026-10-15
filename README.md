@@ -33,10 +33,10 @@ DATABASE_URL=postgresql://user:password@host:5432/db?serverVersion=16&charset=ut
 CORS_ALLOW_ORIGIN=https://your-frontend-domain.example.com
 JWT_SECRET_KEY=/var/www/html/config/jwt/private.pem
 JWT_PUBLIC_KEY=/var/www/html/config/jwt/public.pem
-JWT_PASSPHRASE=replace-me
+JWT_PASSPHRASE=
 ```
 
-> For this Symfony project, `JWT_SECRET_KEY` and `JWT_PUBLIC_KEY` must be file paths inside the container, not random generated strings. The passphrase must match the PEM key pair used by the app.
+> For this Symfony project, `JWT_SECRET_KEY` and `JWT_PUBLIC_KEY` must be file paths inside the container, not random generated strings. The key pair in the repository is now unencrypted, so `JWT_PASSPHRASE` must stay empty.
 
 ### Render database
 
