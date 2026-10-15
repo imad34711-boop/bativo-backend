@@ -35,6 +35,15 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             $event->getRequest()->getPathInfo()
         ));
 
+        $previous = $exception->getPrevious();
+        if (null !== $previous) {
+            error_log(sprintf(
+                'API exception previous: %s - %s',
+                $previous::class,
+                $previous->getMessage()
+            ));
+        }
+
         $statut = $exception instanceof HttpExceptionInterface
             ? $exception->getStatusCode()
             : Response::HTTP_INTERNAL_SERVER_ERROR;
