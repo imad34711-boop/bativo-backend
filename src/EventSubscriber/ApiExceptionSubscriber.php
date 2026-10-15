@@ -9,12 +9,17 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Normalise les erreurs de l'API en JSON.
  */
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
+    public function __construct(private readonly LoggerInterface $logger)
+    {
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [KernelEvents::EXCEPTION => ['onKernelException', 0]];
@@ -27,6 +32,12 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         }
 
         $exception = $event->getThrowable();
+        $this->logger->error('API exception: '.$exception::class.' - '.$exception->getMessage(), [
+            'exception' => $exception,
+            'path' => $event->getRequest()->getPathInfo(),
+            'method' => $event->getRequest()->getMethod(),
+        ]);
+
         $statut = $exception instanceof HttpExceptionInterface
             ? $exception->getStatusCode()
             : Response::HTTP_INTERNAL_SERVER_ERROR;
