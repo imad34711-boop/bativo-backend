@@ -16,14 +16,14 @@ services:
           name: bativo-db
           property: connectionString
       - key: CORS_ALLOW_ORIGIN
-        value: https://your-frontend-domain.example.com
+        value: https://bativo-frontend.vercel.app
       - key: JWT_SECRET_KEY
         value: /var/www/html/config/jwt/private.pem
       - key: JWT_PUBLIC_KEY
         value: /var/www/html/config/jwt/public.pem
       - key: JWT_PASSPHRASE
         value: replace-me
-    initialDeployHook: php bin/console doctrine:migrations:migrate --no-interaction
+    preDeployCommand: php bin/console doctrine:migrations:migrate --no-interaction
 
 databases:
   - name: bativo-db
