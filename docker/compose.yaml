@@ -28,7 +28,7 @@ services:
     environment:
       APP_ENV: ${APP_ENV:-dev}
       DATABASE_URL: postgresql://${POSTGRES_USER:-bativo}:${POSTGRES_PASSWORD:-bativo}@postgres:5432/${POSTGRES_DB:-bativo}?serverVersion=16&charset=utf8
-      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-bativo}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-}
     volumes:
       - ..:/var/www:cached
     depends_on:

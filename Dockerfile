@@ -19,8 +19,15 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 RUN composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader \
+    && mkdir -p config/jwt \
+    && if [ ! -f config/jwt/private.pem ] || [ ! -f config/jwt/public.pem ]; then \
+        openssl genrsa -out config/jwt/private.pem 4096 && \
+        openssl rsa -in config/jwt/private.pem -pubout -out config/jwt/public.pem; \
+    fi \
+    && chmod 600 config/jwt/private.pem \
+    && chmod 644 config/jwt/public.pem \
     && php bin/console cache:clear \
-    && chown -R www-data:www-data var public
+    && chown -R www-data:www-data var public config/jwt
 
 RUN printf '%s\n' \
     'log_errors = On' \

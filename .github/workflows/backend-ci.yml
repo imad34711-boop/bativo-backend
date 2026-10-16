@@ -26,7 +26,7 @@ jobs:
     env:
       APP_ENV: test
       DATABASE_URL: postgresql://bativo:bativo@127.0.0.1:5432/bativo_test?serverVersion=16&charset=utf8
-      JWT_PASSPHRASE: bativo
+      JWT_PASSPHRASE: ""
 
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +40,16 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Generate JWT keys
+        run: |
+          mkdir -p config/jwt
+          if [ ! -f config/jwt/private.pem ] || [ ! -f config/jwt/public.pem ]; then
+            openssl genrsa -out config/jwt/private.pem 4096
+            openssl rsa -in config/jwt/private.pem -pubout -out config/jwt/public.pem
+          fi
+          chmod 600 config/jwt/private.pem
+          chmod 644 config/jwt/public.pem
 
       - name: Validate schema
         run: php bin/console doctrine:schema:validate
